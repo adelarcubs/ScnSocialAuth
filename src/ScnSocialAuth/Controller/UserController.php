@@ -38,14 +38,20 @@ class UserController extends AbstractActionController
     protected $redirectCallback;
 
     /**
+     * @var ZfcUserModuleOptions
+     */
+    protected $zfcModuleOptionsç
+
+    /**
      * @param callable $redirectCallback
      */
-    public function __construct($redirectCallback)
+    public function __construct($redirectCallback, $zfcModuleOptions)
     {
         if (!is_callable($redirectCallback)) {
             throw new \InvalidArgumentException('You must supply a callable redirectCallback');
         }
         $this->redirectCallback = $redirectCallback;
+        $this->zfcModuleOptions = $zfcModuleOptions;
     }
 
     public function addProviderAction()
@@ -96,7 +102,7 @@ class UserController extends AbstractActionController
         $hybridAuth = $this->getHybridAuth();
 
         $query = array();
-        if ($this->getServiceLocator()->get('zfcuser_module_options')->getUseRedirectParameterIfPresent() && $this->getRequest()->getQuery()->get('redirect')) {
+        if ($this->zfcModuleOptions->getUseRedirectParameterIfPresent() && $this->getRequest()->getQuery()->get('redirect')) {
             $query = array('redirect' => $this->getRequest()->getQuery()->get('redirect'));
         }
         $redirectUrl = $this->url()->fromRoute('scn-social-auth-user/authenticate/provider', array('provider' => $provider), array('query' => $query));
@@ -124,7 +130,7 @@ class UserController extends AbstractActionController
         $viewModel->setVariable('options', $this->getOptions());
 
         $redirect = false;
-        if ($this->getServiceLocator()->get('zfcuser_module_options')->getUseRedirectParameterIfPresent() && $this->getRequest()->getQuery()->get('redirect')) {
+        if ($this->zfcModuleOptions->getUseRedirectParameterIfPresent() && $this->getRequest()->getQuery()->get('redirect')) {
             $redirect = $this->getRequest()->getQuery()->get('redirect');
         }
         $viewModel->setVariable('redirect', $redirect);
@@ -173,7 +179,7 @@ class UserController extends AbstractActionController
         $viewModel->setVariable('options', $this->getOptions());
 
         $redirect = false;
-        if ($this->getServiceLocator()->get('zfcuser_module_options')->getUseRedirectParameterIfPresent() && $this->getRequest()->getQuery()->get('redirect')) {
+        if ($this->zfcModuleOptions->getUseRedirectParameterIfPresent() && $this->getRequest()->getQuery()->get('redirect')) {
             $redirect = $this->getRequest()->getQuery()->get('redirect');
         }
         $viewModel->setVariable('redirect', $redirect);
